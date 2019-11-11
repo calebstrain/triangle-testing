@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Triangle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">triangle-testing</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Triangle.java</span></div><h1>Triangle.java</h1><pre class="source lang-java linenums">import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Triangle {
+	
+	private Double a, b, c, s;
+	private Point points[];
+	private Double angles[];
+<span class="fc" id="L9">	public enum TriangleType { INVALID, RIGHT_ISOSCELES, RIGHT_SCALENE, EQUILATERAL, ISOSCELES, SCALENE  };</span>
+	public TriangleType type;
+	
+<span class="fc" id="L12">	Triangle(Double a, Double b, Double c) </span>
+	{
+<span class="fc" id="L14">		angles = new Double[3];</span>
+<span class="fc" id="L15">		this.a = a; this.b = b; this.c = c;</span>
+<span class="fc" id="L16">		type = classify();</span>
+<span class="fc" id="L17">	}</span>
+	
+<span class="fc" id="L19">	Triangle( Point pointA, Point pointB, Point pointC)</span>
+	{
+<span class="fc" id="L21">		points = new Point[3];</span>
+<span class="fc" id="L22">		angles = new Double[3];</span>
+<span class="fc" id="L23">		points[0] = pointA; points[1] = pointB; points[2] = pointC;</span>
+<span class="fc" id="L24">		determineSideLengths();</span>
+<span class="fc" id="L25">		type = classify();</span>
+<span class="fc" id="L26">	} </span>
+	
+	public TriangleType classify()
+	{
+<span class="fc" id="L30">		int state = 0;</span>
+		
+<span class="nc" id="L32">		while(true) </span>
+		{
+<span class="pc bpc" id="L34" title="1 of 5 branches missed.">			switch(state) </span>
+			{
+			case 0:
+<span class="fc bfc" id="L37" title="All 2 branches covered.">				if( !isValid() )</span>
+<span class="fc" id="L38">					return TriangleType.INVALID;</span>
+				else
+<span class="fc" id="L40">					state = 1;</span>
+<span class="fc" id="L41">				break;</span>
+			case 1:
+<span class="fc bfc" id="L43" title="All 2 branches covered.">				if( rightTriangle() ) </span>
+<span class="fc" id="L44">					state = 2;</span>
+				else 
+<span class="fc" id="L46">					state = 3;</span>
+<span class="fc" id="L47">				break;</span>
+			case 2:  
+<span class="fc bfc" id="L49" title="All 2 branches covered.">				if( isIsosceles() )</span>
+<span class="fc" id="L50">					return TriangleType.RIGHT_ISOSCELES;</span>
+				else
+<span class="fc" id="L52">					return TriangleType.RIGHT_SCALENE;</span>
+			case 3:
+<span class="fc bfc" id="L54" title="All 2 branches covered.">				if( isEquilateral() )</span>
+<span class="fc" id="L55">					return TriangleType.EQUILATERAL;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">				else if( isIsosceles() )</span>
+<span class="fc" id="L57">					return TriangleType.ISOSCELES;</span>
+				else
+<span class="fc" id="L59">					return TriangleType.SCALENE;</span>
+			}	
+		}
+	}
+	
+	private boolean isValid() 
+	{
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if( a + b &lt;= c )</span>
+<span class="fc" id="L67">			return false;</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		else if( a + c &lt;= b)</span>
+<span class="fc" id="L69">			return false;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		else if( b + c &lt;= a) </span>
+<span class="fc" id="L71">			return false;</span>
+		else 
+<span class="fc" id="L73">			return true;</span>
+	}
+	
+	private boolean rightTriangle() 
+	{
+<span class="fc" id="L78">		angles[0] = Math.toDegrees( Math.acos( ( b*b + c*c - a*a ) / ( 2*b*c ) ) );</span>
+<span class="fc" id="L79">		angles[1] = Math.toDegrees( Math.acos( ( c*c + a*a - b*b ) / ( 2*a*c ) ) ); </span>
+<span class="fc" id="L80">		angles[2] = ( 180 - angles[0] ) - angles[1];</span>
+		
+<span class="pc bpc" id="L82" title="1 of 4 branches missed.">		if( angles[0] &gt;= 89.9 &amp;&amp; angles[0] &lt;= 90.1 ) </span>
+<span class="fc" id="L83">			return true;</span>
+<span class="fc bfc" id="L84" title="All 4 branches covered.">		else if( angles[1] &gt;= 89.9 &amp;&amp; angles[1] &lt;= 90.1  )</span>
+<span class="fc" id="L85">			return true;</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">		else if( angles[2] &gt;= 89.9 &amp;&amp; angles[2] &lt;= 90.1 )</span>
+<span class="fc" id="L87">			return true;</span>
+		else 
+<span class="fc" id="L89">			return false;</span>
+	}
+	
+	private boolean isEquilateral() 
+	{
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if( points == null )</span>
+<span class="fc bfc" id="L95" title="All 4 branches covered.">			return ( a.equals(b) &amp;&amp; b.equals(c) ); </span>
+		else // compare by angles to prevent rounding error if using points instead of sides
+		{
+<span class="fc bfc" id="L98" title="All 2 branches covered.">			for( double d : angles ) </span>
+			{
+<span class="pc bpc" id="L100" title="1 of 4 branches missed.">				if( !(d &gt;= 59.9 &amp;&amp; d &lt;= 60.1) )</span>
+<span class="fc" id="L101">					return false;</span>
+			}
+<span class="fc" id="L103">			return true;</span>
+		}
+	}
+	private boolean isIsosceles() 
+	{
+<span class="pc bpc" id="L108" title="1 of 4 branches missed.">		if( a.equals(b) &amp;&amp; !b.equals(c) )</span>
+<span class="fc" id="L109">			return true;</span>
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">		else  if( a.equals(c) &amp;&amp; !c.equals(b) )</span>
+<span class="fc" id="L111">			return true;</span>
+<span class="pc bpc" id="L112" title="1 of 4 branches missed.">		else if( b.equals(c) &amp;&amp; !c.equals(a) )</span>
+<span class="fc" id="L113">			return true;</span>
+		else
+<span class="fc" id="L115">			return false;</span>
+	}
+	
+	private void determineSideLengths() 
+	{
+<span class="fc" id="L120">		double arr[] = new double[3];</span>
+<span class="fc" id="L121">		int inc = 1;</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		for( int i = 0; i &lt; 3; i++) </span>
+		{
+<span class="fc bfc" id="L124" title="All 2 branches covered.">			if( i == 2)</span>
+<span class="fc" id="L125">				inc = -2;</span>
+<span class="fc" id="L126">			double x1 = points[i].getX();</span>
+<span class="fc" id="L127">			double x2 = points[i + inc].getX();</span>
+<span class="fc" id="L128">			double y1 = points[i].getY();</span>
+<span class="fc" id="L129">			double y2 = points[i + inc].getY();</span>
+			
+<span class="fc" id="L131">			double xVal = ( x2 - x1 );</span>
+<span class="fc" id="L132">			double yVal = ( y2 - y1 );</span>
+			
+<span class="fc" id="L134">			arr[i] = Math.sqrt( ( xVal * xVal ) + ( yVal * yVal ) );</span>
+		}
+		
+<span class="fc" id="L137">		a = arr[0];</span>
+<span class="fc" id="L138">		b = arr[1];</span>
+<span class="fc" id="L139">		c = arr[2];</span>
+<span class="fc" id="L140">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
